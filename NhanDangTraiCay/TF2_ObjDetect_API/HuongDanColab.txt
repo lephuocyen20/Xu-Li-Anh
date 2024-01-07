@@ -1,0 +1,74 @@
+Bước 1:
+Tạo folder Nhan_Dang_Trai_Cay_TF2_ObjDetect_API trong Google Drive
+Trong folder Nhan_Dang_Trai_Cay_TF2_ObjDetect_API, upload 2 folder:
+TF2_ObjDetect_API
+NhanDangTraiCay
+
+Vào folder NhanDangTraiCay/Tensorflow/workspace/models/my_ssd_mobnet, xóa tất cả các file bắt đầu bằng chữ ckpt, vì đây là các model thầy đã train, các bạn phải xóa để train lại.
+
+Sửa file pipeline.config, 
+ở chỗ num_classes: 5, nếu có 5 loại trái cây
+và batch_size: 32
+Bước training thầy đang để 5.000.
+Cứ 1.000 bước sẽ tạo 1 model,
+   5.000 bước sẽ tạo 6 model.
+Ta sẽ dùng model cuối cùng là model 6 để nhận dạng.
+
+Bước 2:
+Trong folder Nhan_Dang_Trai_Cay_TF2_ObjDetect_API
+Bấm chuột phải, chọn More, chọn Colaboratory
+
+Bước 3:
+Đổi tên Notebook
+Cài đặt GPU: Edit --> Notebook Setting --> Hardware Accelerator --> GPU
+
+Bước 4: 
+
+Cell 1
+from google.colab import drive
+drive.mount('/content/gdrive')
+
+Cell 2
+import os
+os.environ['PYTHONPATH'] = '/env/python'
+os.environ['PYTHONPATH']+=":/content/gdrive/My Drive/Nhan_Dang_Trai_Cay_TF2_ObjDetect_API/TF2_ObjDetect_API/Tensorflow/models:/content/gdrive/My Drive/Nhan_Dang_Trai_Cay_TF2_ObjDetect_API/TF2_ObjDetect_API/Tensorflow/models/research:/content/gdrive/My Drive/Nhan_Dang_Trai_Cay_TF2_ObjDetect_API/TF2_ObjDetect_API/Tensorflow/models/research/slim"
+
+Cell 3
+%cd '/content/gdrive/My Drive/Nhan_Dang_Trai_Cay_TF2_ObjDetect_API/TF2_ObjDetect_API/Tensorflow/models/research'
+
+Cell 4
+!pip install tf_slim
+!pip install lvis
+!pip install tensorflow_addons
+!python object_detection/builders/model_builder_tf2_test.py
+
+Cell 5
+%cd '/content/gdrive/My Drive/Nhan_Dang_Trai_Cay_TF2_ObjDetect_API/NhanDangTraiCay' 
+
+Cell 6
+!python "/content/gdrive/My Drive/Nhan_Dang_Trai_Cay_TF2_ObjDetect_API/TF2_ObjDetect_API/Tensorflow/models/research/object_detection/"model_main_tf2.py --model_dir=Tensorflow/workspace/models/my_ssd_mobnet --pipeline_config_path=Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config --num_train_steps=5000
+
+---HẾT---
+
+Google Colab cho phép chạy tối đa 12 giờ
+
+!pwd để xem folder hiện tại
+
+!python --version
+
+import tensorflow as tf
+print(tf. __version__)
+
+Testing for GPU
+import tensorflow as tf
+tf.test.gpu_device_name()
+
+If the GPU is enabled, it will give the following output:
+'/device:GPU:0'
+
+Listing Devices
+from tensorflow.python.client import device_lib
+device_lib.list_local_devices()
+
+Checking RAM
+!cat /proc/meminfo
